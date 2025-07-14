@@ -3,32 +3,13 @@ phases:
   install:
     runtime-versions:
       nodejs: 16
-    commands:
-      - echo Installing Angular CLI...
-      - npm install -g @angular/cli@latest
   pre_build:
     commands:
-      - echo Installing project dependencies...
-      - npm ci
+      - npm install
   build:
     commands:
-      - echo Building Angular application...
-      - echo Checking Angular version...
-      - npx ng version
-      - echo Checking system resources...
-      - free -h
-      - df -h
-      - echo Building with full error output...
-      - set +e
-      - echo "Building Angular app with development config..."
-      - npx ng build --configuration development
-      - echo "Build completed successfully!"
-      - echo Checking build output...
-      - ls -la dist/
-  post_build:
-    commands:
-      - echo Build completed successfully!
+      - npm run build
 artifacts:
   files:
     - '**/*'
-  base-directory: dist
+  base-directory: dist/angularfolder
