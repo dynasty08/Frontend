@@ -5,7 +5,7 @@ phases:
       nodejs: 22
     commands:
       - echo "Installing Angular CLI..."
-      - npm install -g @angular/cli@latest
+      - npm install -g @angular/cli@16
   pre_build:
     commands:
       - echo "Installing dependencies..."
@@ -15,7 +15,7 @@ phases:
   build:
     commands:
       - echo "Building Angular app..."
-      - ng build --configuration production
+      - npx ng build --configuration production
       - echo "Listing build output..."
       - ls -la dist/
 artifacts:
