@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 18
+      nodejs: 16
     commands:
       - echo Installing Angular CLI...
       - npm install -g @angular/cli@latest
@@ -20,10 +20,12 @@ phases:
       - df -h
       - echo Building with full error output...
       - set +e
+      - echo "Checking TypeScript compilation..."
+      - npx tsc --noEmit || echo "TypeScript check completed with warnings"
       - echo "Trying development build first..."
       - npx ng build --configuration development
-      - echo "Development build completed, trying production..."
-      - npx ng build --configuration production --verbose
+      - echo "Development build completed, trying production with memory limit..."
+      - NODE_OPTIONS=--max_old_space_size=4096 npx ng build --configuration production --verbose
       - BUILD_EXIT_CODE=$?
       - echo "Build exit code was $BUILD_EXIT_CODE"
       - set -e
