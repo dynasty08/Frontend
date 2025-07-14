@@ -5,14 +5,23 @@ phases:
       nodejs: 18
     commands:
       - echo Installing dependencies...
-      - npm install -g @angular/cli
+      - echo Node version: $(node --version)
+      - echo NPM version: $(npm --version)
+      - npm install -g @angular/cli@latest
+      - echo Angular CLI installed: $(ng version --help > /dev/null && echo "success" || echo "failed")
   pre_build:
     commands:
       - echo Installing npm packages...
-      - npm install
+      - npm ci
+      - echo Checking if Angular CLI is available locally...
+      - npx ng version || echo "Local Angular CLI check failed"
   build:
     commands:
       - echo Building Angular app...
+      - echo Checking Angular CLI...
+      - which ng || echo "ng not found globally"
+      - npx --version
+      - npx ng version
       - npx ng build --configuration production
   post_build:
     commands:
