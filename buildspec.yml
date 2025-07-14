@@ -2,18 +2,23 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 16
+      nodejs: 20
+    commands:
+      - echo "Installing Angular CLI..."
+      - npm install -g @angular/cli@latest
   pre_build:
     commands:
+      - echo "Installing dependencies..."
       - npm install
-      - npm install -g @angular/cli
+      - echo "Checking Angular version..."
+      - ng version
   build:
     commands:
-      - echo "Using ng build directly..."
+      - echo "Building Angular app..."
       - ng build
-      - echo "Build completed, checking output..."
+      - echo "Listing build output..."
       - ls -la dist/
 artifacts:
   files:
     - '**/*'
-  base-directory: dist/angularfolder
+  base-directory: dist
