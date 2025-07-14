@@ -6,9 +6,13 @@ phases:
   pre_build:
     commands:
       - npm install
+      - npm install -g @angular/cli
   build:
     commands:
-      - npm run build
+      - echo "Using ng build directly..."
+      - ng build
+      - echo "Build completed, checking output..."
+      - ls -la dist/
 artifacts:
   files:
     - '**/*'
