@@ -15,10 +15,21 @@ phases:
       - echo Building Angular application...
       - echo Checking Angular version...
       - npx ng version
+      - echo Checking system resources...
+      - free -h
+      - df -h
       - echo Building with full error output...
-      - npx ng build --configuration production --verbose 2>&1 || echo "Build failed with exit code $?"
+      - set +e
+      - echo "Trying development build first..."
+      - npx ng build --configuration development
+      - echo "Development build completed, trying production..."
+      - npx ng build --configuration production --verbose
+      - BUILD_EXIT_CODE=$?
+      - echo "Build exit code was $BUILD_EXIT_CODE"
+      - set -e
       - echo Checking if any files were created...
       - ls -la dist/ || echo "No dist folder found"
+      - if [ $BUILD_EXIT_CODE -ne 0 ]; then echo "Build failed but continuing..."; fi
   post_build:
     commands:
       - echo Build completed successfully!
