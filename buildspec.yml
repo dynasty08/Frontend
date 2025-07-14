@@ -9,7 +9,7 @@ phases:
   pre_build:
     commands:
       - echo "Installing dependencies..."
-      - npm install --legacy-peer-deps
+      - npm install --force
       - echo "Checking Angular version..."
       - ng version
   build:
