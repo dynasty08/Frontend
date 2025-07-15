@@ -3,22 +3,16 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 18
+      nodejs: 22
     commands:
-      - echo "Installing dependencies..."
-      - rm -rf node_modules package-lock.json
-      - npm install
-  pre_build:
-    commands:
-      - echo "Checking Angular version..."
-      - npx ng version
+      - echo "Installing Angular CLI"
+      - npm install -g @angular/cli@20
+      - npm ci
   build:
     commands:
-      - echo "Building in production mode..."
-      - npx ng build --configuration production
-      - echo "Build output:"
-      - ls -la dist/angularfolder/browser
+      - echo "Building Angular in production mode"
+      - ng build --configuration production
 artifacts:
+  base-directory: dist/angularfolder
   files:
     - '**/*'
-  base-directory: dist/angularfolder/browser
