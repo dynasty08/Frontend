@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,8 @@ export class LoginComponent {
   password = '';
   errorMessage = '';
 
+  constructor(private router: Router) {}
+
   onSubmit() {
     if (!this.email || !this.password) {
       this.errorMessage = 'Please fill in all fields';
@@ -23,7 +26,7 @@ export class LoginComponent {
     // Simple validation - replace with real authentication
     if (this.email === 'admin@test.com' && this.password === 'password') {
       localStorage.setItem('isLoggedIn', 'true');
-      alert('Login successful!');
+      this.router.navigate(['/dashboard']);
     } else {
       this.errorMessage = 'Invalid email or password';
     }
