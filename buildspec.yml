@@ -13,6 +13,6 @@ phases:
       - echo "Building Angular in production mode"
       - ng build --configuration production
 artifacts:
-  base-directory: dist/angularfolder
+  base-directory: dist/angularfolder/browser
   files:
     - '**/*'
