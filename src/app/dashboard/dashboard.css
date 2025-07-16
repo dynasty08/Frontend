@@ -96,3 +96,10 @@
   color: #28a745;
   margin: 0;
 }
+
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-size: 1.1rem;
+}

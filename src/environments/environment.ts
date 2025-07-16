@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/dev'  // Local development API
+  apiUrl: 'https://twvn323zg6.execute-api.ap-southeast-1.amazonaws.com/dev' // Replace with your dev API Gateway URL
 };

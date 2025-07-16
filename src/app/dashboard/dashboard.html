@@ -12,19 +12,25 @@
       <p class="last-updated">Last Updated: {{ lastUpdated }}</p>
     </div>
     
-    <div class="stats-grid">
+    <div class="stats-grid" *ngIf="!loading; else loadingTemplate">
       <div class="stat-card">
         <h3>Total Users</h3>
-        <p class="stat-number">1,234</p>
+        <p class="stat-number">{{ dashboardData.totalUsers | number }}</p>
       </div>
       <div class="stat-card">
         <h3>Active Sessions</h3>
-        <p class="stat-number">56</p>
+        <p class="stat-number">{{ dashboardData.activeSessions }}</p>
       </div>
       <div class="stat-card">
         <h3>System Status</h3>
-        <p class="stat-status">Online</p>
+        <p class="stat-status">{{ dashboardData.systemStatus }}</p>
       </div>
     </div>
+    
+    <ng-template #loadingTemplate>
+      <div class="loading-message">
+        <p>Loading dashboard data...</p>
+      </div>
+    </ng-template>
   </main>
 </div>
