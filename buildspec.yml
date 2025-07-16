@@ -12,6 +12,11 @@ phases:
     commands:
       - echo "Building Angular in production mode"
       - ng build --configuration production
+  post_build:
+    commands:
+      - echo "Deploying to S3"
+      - aws s3 sync dist/angularfolder/browser/ s3://awsdynasty --delete
+      - echo "Deployment completed"
 artifacts:
   base-directory: dist/angularfolder/browser
   files:
