@@ -5,25 +5,21 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Installing Angular CLI"
+      - echo Installing Angular CLI
       - npm install -g @angular/cli@16
       - npm ci
   build:
     commands:
-      - echo "Building Angular in production mode"
-      - echo "Generating version file"
-      - VERSION="v$(date +%Y.%m.%d)-$CODEBUILD_BUILD_NUMBER"
-      - DATE="$(date)"
-      - echo "{\"version\": \"$VERSION\", \"buildDate\": \"$DATE\"}" > src/assets/version.json
+      - echo Building Angular in production mode
+      - echo "{\"version\": \"v2.2-$CODEBUILD_BUILD_NUMBER\", \"buildDate\": \"$(date)\"}" > src/assets/version.json
       - ng build --configuration production
   post_build:
     commands:
-      - echo "Deploying to S3"
+      - echo Deploying to S3
       - aws s3 sync dist/angularfolder/browser/ s3://awsdynasty --delete
-      - echo "Checking for CloudFront distribution"
-      - if [ ! -z "$CLOUDFRONT_DISTRIBUTION_ID" ]; then echo "Creating CloudFront invalidation"; aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"; fi
-      - echo "Deployment completed"
+      - echo Deployment completed
+
 artifacts:
   base-directory: dist/angularfolder/browser
   files:
-    - '**/*'
+    - "**/*"
