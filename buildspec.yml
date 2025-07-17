@@ -9,11 +9,16 @@ phases:
       - npm install -g @angular/cli@16
       - npm ci
 
+  pre_build:
+    commands:
+      - echo Creating version file
+      - mkdir -p src/assets
+      - echo "version: v3.0-$CODEBUILD_BUILD_NUMBER" > src/assets/version.txt
+      - cat src/assets/version.txt
+
   build:
     commands:
       - echo Building Angular in production mode
-      - >
-        echo "version: v2.2-${CODEBUILD_BUILD_NUMBER}" > src/assets/version.txt
       - ng build --configuration production
 
   post_build:

@@ -12,8 +12,9 @@ import { VersionService } from '../services/version.service';
   styleUrls: ['./dashboard.css']
 })
 export class Dashboard implements OnInit {
-  version = 'Loading...';
-  lastUpdated = '';
+  // Hardcode the version to ensure it's visible
+  version = 'v2.3-UPDATED';
+  lastUpdated = new Date().toLocaleString();
   dashboardData: any = {
     totalUsers: 0,
     activeSessions: 0,
