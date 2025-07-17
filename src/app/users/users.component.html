@@ -1,0 +1,42 @@
+<div class="users-container">
+  <h2>Registered Users</h2>
+  
+  <div class="controls">
+    <button (click)="refreshUsers()" [disabled]="loading || !isOnline">
+      {{ loading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
+  
+  <div *ngIf="!isOnline" class="offline-message">
+    You are currently offline. User data may not be up to date.
+  </div>
+  
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+  
+  <div *ngIf="loading" class="loading">
+    Loading users...
+  </div>
+  
+  <div *ngIf="users.length === 0 && !loading && !error" class="no-users">
+    No users found.
+  </div>
+  
+  <table *ngIf="users.length > 0" class="users-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Registration Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.createdAt | date:'medium' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

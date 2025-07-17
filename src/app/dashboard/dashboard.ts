@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { CommonModule } from '@angular/common';
+import { VersionService } from '../services/version.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
 export class Dashboard implements OnInit {
-  version = 'v2.1';
-  lastUpdated = new Date().toLocaleDateString();
+  version = 'Loading...';
+  lastUpdated = '';
   dashboardData: any = {
     totalUsers: 0,
     activeSessions: 0,
@@ -21,10 +22,22 @@ export class Dashboard implements OnInit {
   loading = true;
   error = '';
 
-  constructor(private router: Router, private apiService: ApiService) {}
+  constructor(
+    private router: Router, 
+    private apiService: ApiService,
+    private versionService: VersionService
+  ) {}
 
   ngOnInit() {
     this.loadDashboardData();
+    this.loadVersionInfo();
+  }
+  
+  loadVersionInfo() {
+    this.versionService.getVersion().subscribe(versionInfo => {
+      this.version = versionInfo.version;
+      this.lastUpdated = versionInfo.buildDate;
+    });
   }
 
   loadDashboardData() {

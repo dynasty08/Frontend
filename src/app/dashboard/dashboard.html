@@ -1,7 +1,10 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
     <h1>Dashboard {{ version }}</h1>
-    <button (click)="logout()" class="logout-btn">Logout</button>
+    <nav class="dashboard-nav">
+      <a routerLink="/users" class="nav-link">View Users</a>
+      <button (click)="logout()" class="logout-btn">Logout</button>
+    </nav>
   </header>
   
   <main class="dashboard-content">

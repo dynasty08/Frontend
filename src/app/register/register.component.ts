@@ -6,16 +6,19 @@ import { ApiService } from '../services/api.service';
 import { NetworkService } from '../services/network.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [FormsModule, CommonModule],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
-export class LoginComponent implements OnInit {
+export class RegisterComponent implements OnInit {
   email = '';
   password = '';
+  confirmPassword = '';
+  name = '';
   errorMessage = '';
+  successMessage = '';
   isOnline = true;
 
   constructor(
@@ -38,72 +41,74 @@ export class LoginComponent implements OnInit {
       }
     });
   }
-  
-  goToRegister(): void {
-    this.router.navigate(['/register']);
-  }
 
   onSubmit() {
-    if (!this.email || !this.password) {
+    // Reset messages
+    this.errorMessage = '';
+    this.successMessage = '';
+    
+    // Validate form
+    if (!this.email || !this.password || !this.confirmPassword || !this.name) {
       this.errorMessage = 'Please fill in all fields';
       return;
     }
     
-    this.errorMessage = '';
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match';
+      return;
+    }
     
     // Check if we're online before making the API call
     if (!this.isOnline) {
       this.errorMessage = 'You are currently offline. Please check your internet connection.';
-      
-      // Fallback to test credentials if offline
-      if (this.email === 'admin@test.com' && this.password === 'password') {
-        localStorage.setItem('isLoggedIn', 'true');
-        this.router.navigate(['/dashboard']);
-      }
       return;
     }
     
-    // Call API for authentication
-    this.apiService.login(this.email, this.password).subscribe({
+    // Call API for registration
+    const userData = {
+      email: this.email,
+      password: this.password,
+      name: this.name
+    };
+    
+    this.apiService.register(userData).subscribe({
       next: (response) => {
-        if (response.token) {
-          localStorage.setItem('authToken', response.token);
-          localStorage.setItem('isLoggedIn', 'true');
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.errorMessage = 'Login failed';
-        }
+        this.successMessage = 'Registration successful! You can now log in.';
+        // Clear form
+        this.email = '';
+        this.password = '';
+        this.confirmPassword = '';
+        this.name = '';
+        
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
       },
       error: (error) => {
-        console.error('Login error:', error);
+        console.error('Registration error:', error);
         
         // Check if it's a connection error
         if (typeof error === 'string') {
           if (error.includes('Connection error')) {
             this.errorMessage = 'Cannot connect to server. Please check your internet connection.';
           } else if (error.includes('API Gateway error')) {
-            this.errorMessage = 'The authentication service is temporarily unavailable. Please try again later.';
+            this.errorMessage = 'The registration service is temporarily unavailable. Please try again later.';
           } else if (error.includes('timeout')) {
             this.errorMessage = 'The server is taking too long to respond. Please try again later.';
+          } else if (error.includes('already exists') || error.includes('duplicate')) {
+            this.errorMessage = 'This email is already registered. Please use a different email or try logging in.';
           } else {
             this.errorMessage = error;
           }
-          
-          // Fallback to test credentials if API fails
-          if (this.email === 'admin@test.com' && this.password === 'password') {
-            localStorage.setItem('isLoggedIn', 'true');
-            this.router.navigate(['/dashboard']);
-          }
         } else {
-          // Handle other errors
-          if (this.email === 'admin@test.com' && this.password === 'password') {
-            localStorage.setItem('isLoggedIn', 'true');
-            this.router.navigate(['/dashboard']);
-          } else {
-            this.errorMessage = 'Invalid email or password';
-          }
+          this.errorMessage = 'Registration failed. Please try again.';
         }
       }
     });
+  }
+  
+  goToLogin() {
+    this.router.navigate(['/login']);
   }
 }
