@@ -13,7 +13,7 @@ import { VersionService } from '../services/version.service';
 })
 export class Dashboard implements OnInit {
   // Hardcode the version to ensure it's visible
-  version = 'v2.3-UPDATED';
+  version = 'v3.0-MANUAL-UPDATE';
   lastUpdated = new Date().toLocaleString();
   dashboardData: any = {
     totalUsers: 0,

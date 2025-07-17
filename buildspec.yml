@@ -8,6 +8,7 @@ phases:
       - npm ci
   build:
     commands:
+      - sed -i "s/version = .*\;/version = 'v3.0-$CODEBUILD_BUILD_NUMBER';/" src/app/dashboard/dashboard.ts
       - ng build --configuration production
   post_build:
     commands:
