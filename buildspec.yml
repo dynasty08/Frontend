@@ -11,7 +11,7 @@ phases:
   build:
     commands:
       - echo Building Angular in production mode
-      - echo "{\"version\": \"v2.2-$CODEBUILD_BUILD_NUMBER\", \"buildDate\": \"$(date)\"}" > src/assets/version.json
+      - echo "version: v2.2-$CODEBUILD_BUILD_NUMBER" > src/assets/version.txt
       - ng build --configuration production
   post_build:
     commands:

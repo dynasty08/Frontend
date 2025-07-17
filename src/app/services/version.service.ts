@@ -20,11 +20,26 @@ export class VersionService {
   constructor(private http: HttpClient) {}
 
   getVersion(): Observable<VersionInfo> {
+    // Try to load JSON version file first
     return this.http.get<VersionInfo>('assets/version.json')
       .pipe(
         catchError(() => {
-          console.log('Could not load version file, using default version');
-          return of(this.defaultVersion);
+          // If JSON fails, try to load text version file
+          return this.http.get('assets/version.txt', { responseType: 'text' })
+            .pipe(
+              map(text => {
+                const versionLine = text.split('\n').find(line => line.startsWith('version:'));
+                const version = versionLine ? versionLine.replace('version:', '').trim() : 'v2.1';
+                return {
+                  version: version,
+                  buildDate: new Date().toLocaleString()
+                };
+              }),
+              catchError(() => {
+                console.log('Could not load any version file, using default version');
+                return of(this.defaultVersion);
+              })
+            );
         })
       );
   }
