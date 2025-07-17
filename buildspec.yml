@@ -1,32 +1,17 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing Angular CLI
       - npm install -g @angular/cli@16
       - npm ci
-
-  pre_build:
-    commands:
-      - echo Creating version file
-      - mkdir -p src/assets
-      - echo "version: v3.0-$CODEBUILD_BUILD_NUMBER" > src/assets/version.txt
-      - cat src/assets/version.txt
-
   build:
     commands:
-      - echo Building Angular in production mode
       - ng build --configuration production
-
   post_build:
     commands:
-      - echo Deploying to S3
       - aws s3 sync dist/angularfolder/browser/ s3://awsdynasty --delete
-      - echo Deployment completed
-
 artifacts:
   base-directory: dist/angularfolder/browser
   files:
