@@ -2,14 +2,14 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 18
+      nodejs: 20
     commands:
       - npm install -g @angular/cli@16
       - npm ci
   build:
     commands:
       - echo "Generating version file"
-      - echo "{\"version\": \"v$(date +%Y.%m.%d)-$CODEBUILD_BUILD_NUMBER\", \"buildDate\": \"$(date)\"}" > src/assets/version.json
+      - echo '{"version": "v$(date +%Y.%m.%d)-$CODEBUILD_BUILD_NUMBER", "buildDate": "$(date)"}' > src/assets/version.json
       - ng build --configuration production
   post_build:
     commands:
