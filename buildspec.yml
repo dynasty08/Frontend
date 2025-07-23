@@ -8,7 +8,8 @@ phases:
       - npm ci
   build:
     commands:
-      - sed -i "s/version = .*\;/version = 'v3.0-$CODEBUILD_BUILD_NUMBER';/" src/app/dashboard/dashboard.ts
+      - echo "Generating version file"
+      - echo "{\"version\": \"v$(date +%Y.%m.%d)-$CODEBUILD_BUILD_NUMBER\", \"buildDate\": \"$(date)\"}" > src/assets/version.json
       - ng build --configuration production
   post_build:
     commands:

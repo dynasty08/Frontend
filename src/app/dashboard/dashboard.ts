@@ -22,6 +22,7 @@ export class Dashboard implements OnInit {
   };
   loading = true;
   error = '';
+  users: any[] = [];
 
   constructor(
     private router: Router, 
@@ -32,6 +33,7 @@ export class Dashboard implements OnInit {
   ngOnInit() {
     this.loadDashboardData();
     this.loadVersionInfo();
+    this.loadUsers();
   }
   
   loadVersionInfo() {
@@ -64,5 +66,22 @@ export class Dashboard implements OnInit {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('authToken');
     this.router.navigate(['/login']);
+  }
+
+  loadUsers() {
+    // Import UserService and inject in constructor for real use
+    // For now, use ApiService if UserService is not imported
+    if ((this.apiService as any).getAllUsers) {
+      (this.apiService as any).getAllUsers().subscribe({
+        next: (users: any[]) => {
+          this.users = users;
+        },
+        error: (error: any) => {
+          console.error('Error loading users:', error);
+          this.error = 'Failed to load users';
+        }
+      });
+    }
+  }
   }
 }

@@ -29,6 +29,35 @@
         <p class="stat-status">{{ dashboardData.systemStatus }}</p>
       </div>
     </div>
+
+    <!-- User Table -->
+    <div *ngIf="users.length > 0" class="user-table-container">
+      <h3>Registered Users</h3>
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.userId }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.createdAt }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="users.length === 0 && !loading && !error">
+      <p>No users found.</p>
+    </div>
+    <div *ngIf="error">
+      <p class="error-message">{{ error }}</p>
+    </div>
     
     <ng-template #loadingTemplate>
       <div class="loading-message">
