@@ -25,18 +25,28 @@ export class LoginComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    // Check initial network status
-    this.isOnline = this.networkService.isOnline();
+    // Temporarily disable network checks to fix infinite redirect
+    console.log('Login component loaded - network checks disabled');
+    this.isOnline = true;
     
-    // Subscribe to network status changes
-    this.networkService.getOnlineStatus().subscribe(online => {
-      this.isOnline = online;
-      if (!online) {
-        this.errorMessage = 'You are currently offline. Please check your internet connection.';
-      } else if (this.errorMessage && this.errorMessage.includes('offline')) {
-        this.errorMessage = '';
-      }
-    });
+    // Check if already logged in and redirect
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+    
+    // // Check initial network status
+    // this.isOnline = this.networkService.isOnline();
+    
+    // // Subscribe to network status changes
+    // this.networkService.getOnlineStatus().subscribe(online => {
+    //   this.isOnline = online;
+    //   if (!online) {
+    //     this.errorMessage = 'You are currently offline. Please check your internet connection.';
+    //   } else if (this.errorMessage && this.errorMessage.includes('offline')) {
+    //     this.errorMessage = '';
+    //   }
+    // });
   }
   
   goToRegister(): void {

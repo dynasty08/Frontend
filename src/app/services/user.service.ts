@@ -39,4 +39,15 @@ export class UserService {
         catchError(error => this.apiService.handleError(error))
       );
   }
+
+  /**
+   * Get PostgreSQL database information
+   */
+  getDatabaseInfo(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/test-database`)
+      .pipe(
+        timeout(this.apiTimeout),
+        catchError(error => this.apiService.handleError(error))
+      );
+  }
 }

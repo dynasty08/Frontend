@@ -15,7 +15,7 @@ export class ApiService {
 
   // Authentication endpoints
   login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, { email, password })
+    return this.http.post(`${this.apiUrl}/login`, { email, password })
       .pipe(
         timeout(this.apiTimeout),
         this.retryService.genericRetryStrategy(),
@@ -24,7 +24,7 @@ export class ApiService {
   }
 
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/register`, userData)
+    return this.http.post(`${this.apiUrl}/register`, userData)
       .pipe(
         timeout(this.apiTimeout),
         this.retryService.genericRetryStrategy(),

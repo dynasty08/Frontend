@@ -44,10 +44,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let user of users">
-            <td>{{ user.userId }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.createdAt }}</td>
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.created_at | date }}</td>
           </tr>
         </tbody>
       </table>
@@ -57,6 +57,74 @@
     </div>
     <div *ngIf="error">
       <p class="error-message">{{ error }}</p>
+    </div>
+
+    <!-- Database Information Section -->
+    <div class="database-section">
+      <h3>PostgreSQL Database Information</h3>
+      
+      <div *ngIf="databaseLoading" class="loading-message">
+        <p>Loading database information...</p>
+      </div>
+      
+      <div *ngIf="databaseError" class="error-message">
+        <p>{{ databaseError }}</p>
+      </div>
+      
+      <div *ngIf="databaseInfo && !databaseLoading" class="database-info">
+        <div class="db-stats-grid">
+          <div class="db-stat-card">
+            <h4>Database</h4>
+            <p>{{ databaseInfo.database?.name }}</p>
+          </div>
+          <div class="db-stat-card">
+            <h4>Host</h4>
+            <p>{{ databaseInfo.database?.host }}</p>
+          </div>
+          <div class="db-stat-card">
+            <h4>Total Tables</h4>
+            <p>{{ databaseInfo.statistics?.totalTables }}</p>
+          </div>
+          <div class="db-stat-card">
+            <h4>Total Records</h4>
+            <p>{{ databaseInfo.statistics?.totalRows }}</p>
+          </div>
+        </div>
+        
+        <div class="tables-info" *ngIf="databaseInfo.tables?.length > 0">
+          <h4>Database Tables:</h4>
+          <div class="tables-grid">
+            <div *ngFor="let tableName of databaseInfo.tables" class="table-card">
+              <h5>{{ tableName }}</h5>
+              <div *ngIf="databaseInfo.tableData[tableName]">
+                <p *ngIf="!databaseInfo.tableData[tableName].error">
+                  Rows: {{ databaseInfo.tableData[tableName].totalRows }}
+                </p>
+                <p *ngIf="databaseInfo.tableData[tableName].error" class="error-text">
+                  {{ databaseInfo.tableData[tableName].error }}
+                </p>
+                
+                <!-- Sample Data -->
+                <div *ngIf="databaseInfo.tableData[tableName].sampleData?.length > 0" class="sample-data">
+                  <h6>Sample Data:</h6>
+                  <table class="sample-table">
+                    <thead>
+                      <tr>
+                        <th *ngFor="let col of databaseInfo.tableData[tableName].columnNames">{{ col }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let row of databaseInfo.tableData[tableName].sampleData">
+                        <td *ngFor="let col of databaseInfo.tableData[tableName].columnNames">{{ row[col] }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     
     <ng-template #loadingTemplate>
