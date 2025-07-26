@@ -44,10 +44,14 @@ export class UserService {
    * Get PostgreSQL database information
    */
   getDatabaseInfo(): Observable<any> {
+    // Don't use auth headers for database info endpoint
     return this.http.get(`${this.apiUrl}/test-database`)
       .pipe(
         timeout(this.apiTimeout),
-        catchError(error => this.apiService.handleError(error))
+        catchError(error => {
+          console.error('Database API error:', error);
+          return this.apiService.handleError(error);
+        })
       );
   }
 }

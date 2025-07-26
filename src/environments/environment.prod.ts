@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://twvn323zg6.execute-api.ap-southeast-1.amazonaws.com/prod',
+  apiUrl: 'https://twvn323zg6.execute-api.ap-southeast-1.amazonaws.com/dev',
   apiTimeout: 10000, // 10 seconds timeout
   maxRetries: 5,     // Retry settings for production
   retryDelay: 1000,  // 1 second initial delay between retries
