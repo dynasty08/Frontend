@@ -39,14 +39,14 @@ export class Dashboard implements OnInit {
     this.loadUsers();
     this.loadDatabaseInfo();
     
-    // Set loading to false and provide default dashboard data
-    this.loading = false;
+    // Set default dashboard data
     this.dashboardData = {
       totalUsers: 0,
       activeSessions: 12,
       systemStatus: 'Online'
     };
-    console.log('Dashboard loaded successfully');
+    this.loading = false;
+    console.log('Dashboard initialized');
   }
   
   loadVersionInfo() {
@@ -76,35 +76,41 @@ export class Dashboard implements OnInit {
     this.router.navigate(['/login']);
   }
 
- async loadUsers() {
- try {
- const response = await fetch('https://twvn323zg6.execute-api.ap-southeast-1.amazonaws.com/dev/api/users');
- const result = await response.json();
- this.users = result.data || [];
- this.dashboardData.totalUsers = this.users.length;
-   console.log('Users loaded:', this.users);
- } catch (error) {
- console.error('Error loading users:', error);
-   this.error = 'Failed to load users';
-     this.users = []; // Set empty array on error
+  async loadUsers() {
+    try {
+      const response = await fetch('https://mrshckarmg.execute-api.ap-southeast-1.amazonaws.com/dev/users');
+      const result = await response.json();
+      console.log('Users API Response:', result);
+      
+      this.users = result.users || result.data || [];
+      this.dashboardData.totalUsers = this.users.length;
+      this.error = '';
+      console.log('Users loaded:', this.users.length, 'users');
+    } catch (error) {
+      console.error('Error loading users:', error);
+      this.error = 'Failed to load users';
+      this.users = [];
+      this.dashboardData.totalUsers = 0;
     }
   }
 
-  loadDatabaseInfo() {
+  async loadDatabaseInfo() {
     this.databaseLoading = true;
     this.databaseError = '';
     
-    this.userService.getDatabaseInfo().subscribe({
-      next: (data) => {
-        this.databaseInfo = data;
-        this.databaseLoading = false;
-        console.log('Database info loaded:', data);
-      },
-      error: (error) => {
-        console.error('Database info error:', error);
-        this.databaseError = 'Failed to load database information';
-        this.databaseLoading = false;
-      }
-    });
+    try {
+      const response = await fetch('https://mrshckarmg.execute-api.ap-southeast-1.amazonaws.com/dev/database');
+      const data = await response.json();
+      console.log('Database API Response:', data);
+      
+      this.databaseInfo = data;
+      this.databaseLoading = false;
+      this.databaseError = '';
+    } catch (error) {
+      console.error('Database info error:', error);
+      this.databaseError = 'Failed to load database information';
+      this.databaseLoading = false;
+      this.databaseInfo = null;
+    }
   }
 }

@@ -44,13 +44,21 @@ export class UserService {
    * Get PostgreSQL database information
    */
   getDatabaseInfo(): Observable<any> {
-    // Don't use auth headers for database info endpoint
-    return this.http.get(`${this.apiUrl}/test-database`)
+    // Try real database first, fallback to mock data if it fails
+    return this.http.get(`${this.apiUrl}/database`)
       .pipe(
-        timeout(this.apiTimeout),
+        timeout(30000), // 30 seconds for database connection
         catchError(error => {
-          console.error('Database API error:', error);
-          return this.apiService.handleError(error);
+          console.error('Real database API error, trying fallback:', error);
+          // Fallback to mock data if real database fails
+          return this.http.get(`${this.apiUrl}/test-database`)
+            .pipe(
+              timeout(this.apiTimeout),
+              catchError(fallbackError => {
+                console.error('Fallback database API error:', fallbackError);
+                return this.apiService.handleError(fallbackError);
+              })
+            );
         })
       );
   }

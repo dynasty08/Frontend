@@ -24,11 +24,20 @@ export class ApiService {
   }
 
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData)
+    console.log('Calling registration API:', `${this.apiUrl}/register`);
+    console.log('Registration data:', userData);
+    
+    return this.http.post(`${this.apiUrl}/register`, userData, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    })
       .pipe(
         timeout(this.apiTimeout),
-        this.retryService.genericRetryStrategy(),
-        catchError(error => this.handleError(error))
+        catchError(error => {
+          console.error('Registration API error:', error);
+          return this.handleError(error);
+        })
       );
   }
 

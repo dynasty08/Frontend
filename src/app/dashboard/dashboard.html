@@ -44,19 +44,23 @@
         </thead>
         <tbody>
           <tr *ngFor="let user of users">
-          <td>{{ user.id }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.created_at | date }}</td>
+            <td>{{ user.userId || user.id }}</td>
+            <td>{{ user.name || user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.createdAt || user.created_at | date }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div *ngIf="users.length === 0 && !loading && !error">
-      <p>No users found.</p>
+    
+    <!-- Show error message if there's an error -->
+    <div *ngIf="error && users.length === 0" class="error-message">
+      <p>{{ error }}</p>
     </div>
-    <div *ngIf="error">
-      <p class="error-message">{{ error }}</p>
+    
+    <!-- Show 'No users found' only if no error and no users -->
+    <div *ngIf="users.length === 0 && !error && !loading" class="info-message">
+      <p>No users registered yet.</p>
     </div>
 
     <!-- Database Information Section -->
