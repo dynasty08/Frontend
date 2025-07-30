@@ -38,11 +38,12 @@ export class Dashboard implements OnInit {
   ngOnInit() {
     this.loadUsers();
     this.loadDatabaseInfo();
+    this.loadActiveSessions();
     
     // Set default dashboard data
     this.dashboardData = {
       totalUsers: 0,
-      activeSessions: 12,
+      activeSessions: 0,
       systemStatus: 'Online'
     };
     this.loading = false;
@@ -111,6 +112,23 @@ export class Dashboard implements OnInit {
       this.databaseError = 'Failed to load database information';
       this.databaseLoading = false;
       this.databaseInfo = null;
+    }
+  }
+
+  async loadActiveSessions() {
+    try {
+      const response = await fetch('https://mrshckarmg.execute-api.ap-southeast-1.amazonaws.com/dev/active-sessions');
+      const data = await response.json();
+      console.log('Active Sessions API Response:', data);
+      
+      if (data.success) {
+        this.dashboardData.activeSessions = data.activeSessions;
+      } else {
+        this.dashboardData.activeSessions = 0;
+      }
+    } catch (error) {
+      console.error('Active sessions error:', error);
+      this.dashboardData.activeSessions = 0;
     }
   }
 }
