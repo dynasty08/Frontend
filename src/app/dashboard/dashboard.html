@@ -2,7 +2,7 @@
   <header class="dashboard-header">
     <h1>Dashboard {{ version }}</h1>
     <nav class="dashboard-nav">
-      <a routerLink="/users" class="nav-link">View Users</a>
+      <button (click)="toggleUsers()" class="nav-link">{{ showUsers ? 'Hide Users' : 'View Users' }}</button>
       <button (click)="logout()" class="logout-btn">Logout</button>
     </nav>
   </header>
@@ -30,37 +30,40 @@
       </div>
     </div>
 
-    <!-- User Table -->
-    <div *ngIf="users.length > 0" class="user-table-container">
+    <!-- User Table - Only shown when View Users is clicked -->
+    <div *ngIf="showUsers" class="user-section">
       <h3>Registered Users</h3>
-      <table class="user-table">
-        <thead>
-          <tr>
-            <th>User ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Created At</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of users">
-            <td>{{ user.userId || user.id }}</td>
-            <td>{{ user.name || user.username }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.createdAt || user.created_at | date }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <!-- Show error message if there's an error -->
-    <div *ngIf="error && users.length === 0" class="error-message">
-      <p>{{ error }}</p>
-    </div>
-    
-    <!-- Show 'No users found' only if no error and no users -->
-    <div *ngIf="users.length === 0 && !error && !loading" class="info-message">
-      <p>No users registered yet.</p>
+      
+      <div *ngIf="users.length > 0" class="user-table-container">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Created At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>{{ user.userId || user.id }}</td>
+              <td>{{ user.name || user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.createdAt || user.created_at | date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Show error message if there's an error -->
+      <div *ngIf="error && users.length === 0" class="error-message">
+        <p>{{ error }}</p>
+      </div>
+      
+      <!-- Show 'No users found' only if no error and no users -->
+      <div *ngIf="users.length === 0 && !error && !loading" class="info-message">
+        <p>No users registered yet.</p>
+      </div>
     </div>
 
     <!-- Database Information Section -->

@@ -24,6 +24,7 @@ export class Dashboard implements OnInit {
   loading = true;
   error = '';
   users: any[] = [];
+  showUsers = false;
   databaseInfo: any = null;
   databaseLoading = false;
   databaseError = '';
@@ -130,5 +131,9 @@ export class Dashboard implements OnInit {
       console.error('Active sessions error:', error);
       this.dashboardData.activeSessions = 0;
     }
+  }
+
+  toggleUsers() {
+    this.showUsers = !this.showUsers;
   }
 }
