@@ -19,10 +19,12 @@ phases:
         echo "{\"version\": \"$VERSION\", \"buildDate\": \"$BUILD_DATE\", \"buildNumber\": \"$CODEBUILD_BUILD_NUMBER\"}" > src/assets/version.json
         echo "Generated version: $VERSION"
       - ng build --configuration production
-      - echo "Copying version.json to build output"
+      - echo "Creating assets directory and copying version.json"
+      - mkdir -p dist/angularfolder/browser/assets
       - cp src/assets/version.json dist/angularfolder/browser/assets/version.json
       - echo "Build output structure:"
       - ls -la dist/angularfolder/browser/
+      - ls -la dist/angularfolder/browser/assets/
   post_build:
     commands:
       - echo "Build completed successfully"
