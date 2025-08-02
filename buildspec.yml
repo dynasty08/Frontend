@@ -19,11 +19,17 @@ phases:
         echo "{\"version\": \"$VERSION\", \"buildDate\": \"$BUILD_DATE\", \"buildNumber\": \"$CODEBUILD_BUILD_NUMBER\"}" > src/assets/version.json
         echo "Generated version: $VERSION"
       - ng build --configuration production
+      - echo "Copying version.json to build output"
+      - cp src/assets/version.json dist/angularfolder/browser/assets/version.json
+      - echo "Build output structure:"
+      - ls -la dist/angularfolder/browser/
   post_build:
     commands:
       - echo "Build completed successfully"
       - cat src/assets/version.json
       - aws s3 sync dist/angularfolder/browser/ s3://awsdynasty --delete
+      - echo "Invalidating CloudFront cache for version.json"
+      - aws cloudfront create-invalidation --distribution-id E1234567890 --paths "/assets/version.json" || echo "CloudFront invalidation failed or not configured"
       - echo "Deployment completed with version $(cat src/assets/version.json | grep -o '"version":"[^"]*' | cut -d'"' -f4)"
 artifacts:
   base-directory: dist/angularfolder/browser

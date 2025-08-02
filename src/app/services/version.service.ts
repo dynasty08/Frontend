@@ -20,8 +20,9 @@ export class VersionService {
   constructor(private http: HttpClient) {}
 
   getVersion(): Observable<VersionInfo> {
-    // Try to load JSON version file first
-    return this.http.get<VersionInfo>('assets/version.json')
+    // Add cache-busting parameter to force fresh version loading
+    const cacheBuster = new Date().getTime();
+    return this.http.get<VersionInfo>(`assets/version.json?v=${cacheBuster}`)
       .pipe(
         catchError(() => {
           // If JSON fails, try to load text version file
