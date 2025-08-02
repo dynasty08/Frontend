@@ -31,6 +31,9 @@
   border-radius: 4px;
   background-color: rgba(255, 255, 255, 0.1);
   transition: background-color 0.3s;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
 
 .nav-link:hover {
@@ -235,4 +238,73 @@
 .error-text {
   color: #dc3545;
   font-style: italic;
+}
+
+/* User Section Styles */
+.user-section {
+  margin-top: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-section h3 {
+  color: #007bff;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+.user-table-container {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-table thead {
+  background: #007bff;
+  color: white;
+}
+
+.user-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  color: #495057;
+}
+
+.user-table tbody tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s;
+}
+
+.user-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.info-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-style: italic;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 1rem;
 }
