@@ -13,9 +13,9 @@ import { VersionService } from '../services/version.service';
   styleUrls: ['./dashboard.css']
 })
 export class Dashboard implements OnInit {
-  // Set version to current build
-  version = 'v3.1';
-  lastUpdated = new Date().toLocaleString();
+  // Dynamic version from build
+  version = 'Loading...';
+  lastUpdated = 'Loading...';
   dashboardData: any = {
     totalUsers: 0,
     activeSessions: 0,
@@ -37,6 +37,7 @@ export class Dashboard implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadVersionInfo();
     this.loadUsers();
     this.loadDatabaseInfo();
     this.loadActiveSessions();
@@ -52,9 +53,16 @@ export class Dashboard implements OnInit {
   }
   
   loadVersionInfo() {
-    this.versionService.getVersion().subscribe(versionInfo => {
-      this.version = versionInfo.version;
-      this.lastUpdated = versionInfo.buildDate;
+    this.versionService.getVersion().subscribe({
+      next: (versionInfo) => {
+        this.version = versionInfo.version;
+        this.lastUpdated = versionInfo.buildDate;
+      },
+      error: (error) => {
+        console.error('Version load error:', error);
+        this.version = 'v3.1-local';
+        this.lastUpdated = new Date().toLocaleString();
+      }
     });
   }
 

@@ -10,11 +10,21 @@ phases:
     commands:
       - echo "Generating version file"
       - |
-        echo "{\"version\": \"v$(date +%Y.%m.%d)-$CODEBUILD_BUILD_NUMBER\", \"buildDate\": \"$(date)\"}" > src/assets/version.json
+        # Get git commit count for version increment
+        GIT_COMMIT_COUNT=$(git rev-list --count HEAD 2>/dev/null || echo "1")
+        MAJOR_VERSION="4"
+        MINOR_VERSION=$((GIT_COMMIT_COUNT % 100))
+        VERSION="v${MAJOR_VERSION}.${MINOR_VERSION}.${CODEBUILD_BUILD_NUMBER:-1}"
+        BUILD_DATE=$(date '+%Y-%m-%d %H:%M:%S UTC')
+        echo "{\"version\": \"$VERSION\", \"buildDate\": \"$BUILD_DATE\", \"buildNumber\": \"$CODEBUILD_BUILD_NUMBER\"}" > src/assets/version.json
+        echo "Generated version: $VERSION"
       - ng build --configuration production
   post_build:
     commands:
+      - echo "Build completed successfully"
+      - cat src/assets/version.json
       - aws s3 sync dist/angularfolder/browser/ s3://awsdynasty --delete
+      - echo "Deployment completed with version $(cat src/assets/version.json | grep -o '"version":"[^"]*' | cut -d'"' -f4)"
 artifacts:
   base-directory: dist/angularfolder/browser
   files:
