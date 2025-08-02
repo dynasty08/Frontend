@@ -18,8 +18,13 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/login`, { email, password })
       .pipe(
         timeout(this.apiTimeout),
-        this.retryService.genericRetryStrategy(),
-        catchError(error => this.handleError(error))
+        catchError(error => {
+          // For login, preserve the original error structure for proper handling
+          if (error.status === 401 || error.status === 400) {
+            return throwError(() => error);
+          }
+          return this.handleError(error);
+        })
       );
   }
 

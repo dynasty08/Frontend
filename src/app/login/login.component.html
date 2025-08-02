@@ -23,7 +23,11 @@
       {{ errorMessage }}
     </div>
 
-    <button type="submit">Login</button>
+    <div class="loading" *ngIf="isLoading">
+      Logging in...
+    </div>
+
+    <button type="submit" [disabled]="isLoading">{{ isLoading ? 'Logging in...' : 'Login' }}</button>
     
     <div class="register-link">
       Don't have an account? <a (click)="goToRegister()">Register</a>

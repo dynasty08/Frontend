@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
   password = '';
   errorMessage = '';
   isOnline = true;
+  isLoading = false;
 
   constructor(
     private router: Router, 
@@ -35,18 +36,7 @@ export class LoginComponent implements OnInit {
       return;
     }
     
-    // // Check initial network status
-    // this.isOnline = this.networkService.isOnline();
     
-    // // Subscribe to network status changes
-    // this.networkService.getOnlineStatus().subscribe(online => {
-    //   this.isOnline = online;
-    //   if (!online) {
-    //     this.errorMessage = 'You are currently offline. Please check your internet connection.';
-    //   } else if (this.errorMessage && this.errorMessage.includes('offline')) {
-    //     this.errorMessage = '';
-    //   }
-    // });
   }
   
   goToRegister(): void {
@@ -60,9 +50,11 @@ export class LoginComponent implements OnInit {
     }
     
     this.errorMessage = '';
+    this.isLoading = true;
     
     // Check if we're online before making the API call
     if (!this.isOnline) {
+      this.isLoading = false;
       this.errorMessage = 'You are currently offline. Please check your internet connection.';
       
       // Fallback to test credentials if offline
@@ -76,6 +68,7 @@ export class LoginComponent implements OnInit {
     // Call API for authentication
     this.apiService.login(this.email, this.password).subscribe({
       next: (response) => {
+        this.isLoading = false;
         if (response.token) {
           localStorage.setItem('authToken', response.token);
           localStorage.setItem('isLoggedIn', 'true');
@@ -85,33 +78,22 @@ export class LoginComponent implements OnInit {
         }
       },
       error: (error) => {
+        this.isLoading = false;
         console.error('Login error:', error);
         
-        // Check if it's a connection error
-        if (typeof error === 'string') {
-          if (error.includes('Connection error')) {
-            this.errorMessage = 'Cannot connect to server. Please check your internet connection.';
-          } else if (error.includes('API Gateway error')) {
-            this.errorMessage = 'The authentication service is temporarily unavailable. Please try again later.';
-          } else if (error.includes('timeout')) {
-            this.errorMessage = 'The server is taking too long to respond. Please try again later.';
-          } else {
-            this.errorMessage = error;
-          }
-          
-          // Fallback to test credentials if API fails
-          if (this.email === 'admin@test.com' && this.password === 'password') {
-            localStorage.setItem('isLoggedIn', 'true');
-            this.router.navigate(['/dashboard']);
-          }
+        // Handle HTTP error responses
+        if (error.status === 401) {
+          this.errorMessage = 'Invalid email or password. Please check your credentials.';
+        } else if (error.status === 400) {
+          this.errorMessage = 'Please fill in all required fields.';
+        } else if (error.status === 0) {
+          this.errorMessage = 'Cannot connect to server. Please check your internet connection.';
+        } else if (error.status >= 500) {
+          this.errorMessage = 'Server error. Please try again later.';
+        } else if (error.error && error.error.message) {
+          this.errorMessage = error.error.message;
         } else {
-          // Handle other errors
-          if (this.email === 'admin@test.com' && this.password === 'password') {
-            localStorage.setItem('isLoggedIn', 'true');
-            this.router.navigate(['/dashboard']);
-          } else {
-            this.errorMessage = 'Invalid email or password';
-          }
+          this.errorMessage = 'Login failed. Please try again.';
         }
       }
     });
