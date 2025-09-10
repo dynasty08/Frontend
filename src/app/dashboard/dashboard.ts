@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { UserService } from '../services/user.service';
 import { CommonModule } from '@angular/common';
@@ -8,11 +8,11 @@ import { VersionService } from '../services/version.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class Dashboard implements OnInit {
+export class DashboardComponent implements OnInit {
   // Dynamic version from build
   version = 'Loading...';
   lastUpdated = 'Loading...';
@@ -86,57 +86,79 @@ export class Dashboard implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  async loadUsers() {
+  loadUsers() {
+    const sanitize = (input: any) => typeof input === 'string' ? input.replace(/[\r\n\t]/g, '_') : JSON.stringify(input).replace(/[\r\n\t]/g, '_');
     try {
-      const response = await fetch('https://mrshckarmg.execute-api.ap-southeast-1.amazonaws.com/dev/users');
-      const result = await response.json();
-      console.log('Users API Response:', result);
-      
-      this.users = result.users || result.data || [];
-      this.dashboardData.totalUsers = this.users.length;
-      this.error = '';
-      console.log('Users loaded:', this.users.length, 'users');
-    } catch (error) {
-      console.error('Error loading users:', error);
+      this.userService.getAllUsers().subscribe({
+        next: (result) => {
+          console.log('Users API Response received');
+          this.users = result.users || result.data || [];
+          this.dashboardData.totalUsers = this.users.length;
+          this.error = '';
+          console.log('Users loaded:', this.users.length, 'users');
+        },
+        error: (error) => {
+          console.error('Error loading users:', sanitize(error.message || 'Unknown error'));
+          this.error = 'Failed to load users';
+          this.users = [];
+          this.dashboardData.totalUsers = 0;
+        }
+      });
+    } catch (error: any) {
+      console.error('Error loading users:', sanitize(error.message || 'Unknown error'));
       this.error = 'Failed to load users';
       this.users = [];
       this.dashboardData.totalUsers = 0;
     }
   }
 
-  async loadDatabaseInfo() {
+  loadDatabaseInfo() {
+    const sanitize = (input: any) => typeof input === 'string' ? input.replace(/[\r\n\t]/g, '_') : JSON.stringify(input).replace(/[\r\n\t]/g, '_');
     this.databaseLoading = true;
     this.databaseError = '';
     
     try {
-      const response = await fetch('https://mrshckarmg.execute-api.ap-southeast-1.amazonaws.com/dev/database');
-      const data = await response.json();
-      console.log('Database API Response:', data);
-      
-      this.databaseInfo = data;
-      this.databaseLoading = false;
-      this.databaseError = '';
-    } catch (error) {
-      console.error('Database info error:', error);
+      this.userService.getDatabaseInfo().subscribe({
+        next: (data) => {
+          console.log('Database API Response received');
+          this.databaseInfo = data;
+          this.databaseLoading = false;
+          this.databaseError = '';
+        },
+        error: (error) => {
+          console.error('Database info error:', sanitize(error.message || 'Unknown error'));
+          this.databaseError = 'Failed to load database information';
+          this.databaseLoading = false;
+          this.databaseInfo = null;
+        }
+      });
+    } catch (error: any) {
+      console.error('Database info error:', sanitize(error.message || 'Unknown error'));
       this.databaseError = 'Failed to load database information';
       this.databaseLoading = false;
       this.databaseInfo = null;
     }
   }
 
-  async loadActiveSessions() {
+  loadActiveSessions() {
+    const sanitize = (input: any) => typeof input === 'string' ? input.replace(/[\r\n\t]/g, '_') : JSON.stringify(input).replace(/[\r\n\t]/g, '_');
     try {
-      const response = await fetch('https://mrshckarmg.execute-api.ap-southeast-1.amazonaws.com/dev/active-sessions');
-      const data = await response.json();
-      console.log('Active Sessions API Response:', data);
-      
-      if (data.success) {
-        this.dashboardData.activeSessions = data.activeSessions;
-      } else {
-        this.dashboardData.activeSessions = 0;
-      }
-    } catch (error) {
-      console.error('Active sessions error:', error);
+      this.apiService.apiCall('get', '/active-sessions').subscribe({
+        next: (data) => {
+          console.log('Active Sessions API Response received');
+          if (data.success) {
+            this.dashboardData.activeSessions = data.activeSessions;
+          } else {
+            this.dashboardData.activeSessions = 0;
+          }
+        },
+        error: (error) => {
+          console.error('Active sessions error:', sanitize(error.message || 'Unknown error'));
+          this.dashboardData.activeSessions = 0;
+        }
+      });
+    } catch (error: any) {
+      console.error('Active sessions error:', sanitize(error.message || 'Unknown error'));
       this.dashboardData.activeSessions = 0;
     }
   }

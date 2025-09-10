@@ -29,8 +29,9 @@ export class ApiService {
   }
 
   register(userData: any): Observable<any> {
+    const sanitize = (input: any) => typeof input === 'string' ? input.replace(/[\r\n\t]/g, '_') : JSON.stringify(input).replace(/[\r\n\t]/g, '_');
     console.log('Calling registration API:', `${this.apiUrl}/register`);
-    console.log('Registration data:', userData);
+    console.log('Registration initiated');
     
     return this.http.post(`${this.apiUrl}/register`, userData, {
       headers: new HttpHeaders({
@@ -40,7 +41,8 @@ export class ApiService {
       .pipe(
         timeout(this.apiTimeout),
         catchError(error => {
-          console.error('Registration API error:', error);
+          const sanitize = (input: any) => typeof input === 'string' ? input.replace(/[\r\n\t]/g, '_') : JSON.stringify(input).replace(/[\r\n\t]/g, '_');
+          console.error('Registration API error:', sanitize(error.message || 'Unknown error'));
           return this.handleError(error);
         })
       );
@@ -70,10 +72,15 @@ export class ApiService {
   // Helper method to add auth token to headers
   getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
+    const headers: any = {
       'Content-Type': 'application/json'
-    });
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return new HttpHeaders(headers);
   }
 
   // Generic API call method
@@ -115,17 +122,19 @@ export class ApiService {
   handleError = (error: any) => {
     let errorMessage = '';
     
+    const sanitize = (input: any) => typeof input === 'string' ? input.replace(/[\r\n\t]/g, '_') : JSON.stringify(input).replace(/[\r\n\t]/g, '_');
+    
     // Check for specific ECONNRESET error
     if (error.message && error.message.includes('ECONNRESET')) {
       errorMessage = 'Connection reset: The server closed the connection unexpectedly. Please try again.';
-      console.error('ECONNRESET error detected', error);
+      console.error('ECONNRESET error detected');
       return throwError(() => errorMessage);
     }
     
     // Check for AI model high load errors
     if (this.isAIModelLoadError(error)) {
       errorMessage = 'AI service is currently experiencing high load. Please try again later.';
-      console.error('AI model high load error detected', error);
+      console.error('AI model high load error detected');
       return throwError(() => ({ message: errorMessage, isAILoadError: true }));
     }
     
@@ -135,13 +144,13 @@ export class ApiService {
     } else if (error.name === 'TimeoutError') {
       // Timeout error
       errorMessage = 'Connection timeout: The server is taking too long to respond.';
-      console.error('Request timeout error', error);
+      console.error('Request timeout error');
     } else {
       // Server-side error
       if (error.status === 0 && error.name === 'HttpErrorResponse') {
         // This typically includes network errors
         errorMessage = 'Connection error: The server is unreachable. Please check your network connection.';
-        console.error('Network error detected', error);
+        console.error('Network error detected');
       } else if (
         // Check for API Gateway errors in different formats
         (error.error && error.error.message && error.error.message.includes('unexpected error')) ||
@@ -151,20 +160,20 @@ export class ApiService {
       ) {
         // Handle API Gateway generic errors
         errorMessage = 'AWS API Gateway error: The service is temporarily unavailable. Please try again later.';
-        console.error('API Gateway error detected', error);
+        console.error('API Gateway error detected');
         // Log the request ID if available
         if (error.error && error.error.requestId) {
-          console.error('Request ID:', error.error.requestId);
+          console.error('Request ID:', sanitize(error.error.requestId));
         }
       } else if (error.status === 429) {
         // Too many requests error
         errorMessage = 'Too many requests: The service is rate limited. Please try again later.';
-        console.error('Rate limit error detected', error);
+        console.error('Rate limit error detected');
       } else {
         errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
       }
     }
-    console.error(errorMessage);
+    console.error('API Error:', sanitize(errorMessage));
     return throwError(() => errorMessage);
   }
   

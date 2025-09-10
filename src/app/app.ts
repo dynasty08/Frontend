@@ -1,14 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ConnectionStatusComponent } from './components/connection-status/connection-status.component';
-
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ConnectionStatusComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.css']
 })
-export class App {
+export class AppComponent {
   protected readonly title = signal('angularfolder');
 }

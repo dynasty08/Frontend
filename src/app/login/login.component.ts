@@ -26,8 +26,6 @@ export class LoginComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    // Temporarily disable network checks to fix infinite redirect
-    console.log('Login component loaded - network checks disabled');
     this.isOnline = true;
     
     // Check if already logged in and redirect
@@ -35,8 +33,6 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/dashboard']);
       return;
     }
-    
-    
   }
   
   goToRegister(): void {
@@ -56,12 +52,6 @@ export class LoginComponent implements OnInit {
     if (!this.isOnline) {
       this.isLoading = false;
       this.errorMessage = 'You are currently offline. Please check your internet connection.';
-      
-      // Fallback to test credentials if offline
-      if (this.email === 'admin@test.com' && this.password === 'password') {
-        localStorage.setItem('isLoggedIn', 'true');
-        this.router.navigate(['/dashboard']);
-      }
       return;
     }
     
@@ -79,7 +69,8 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        console.error('Login error:', error);
+        const sanitize = (input: any) => typeof input === 'string' ? input.replace(/[\r\n\t]/g, '_') : JSON.stringify(input).replace(/[\r\n\t]/g, '_');
+        console.error('Login error:', sanitize(error.message || 'Unknown error'));
         
         // Handle HTTP error responses
         if (error.status === 401) {

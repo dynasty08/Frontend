@@ -49,13 +49,14 @@ export class UserService {
       .pipe(
         timeout(30000), // 30 seconds for database connection
         catchError(error => {
-          console.error('Real database API error, trying fallback:', error);
+          const sanitize = (input: any) => typeof input === 'string' ? input.replace(/[\r\n\t]/g, '_') : JSON.stringify(input).replace(/[\r\n\t]/g, '_');
+          console.error('Real database API error, trying fallback:', sanitize(error.message || 'Unknown error'));
           // Fallback to mock data if real database fails
           return this.http.get(`${this.apiUrl}/test-database`)
             .pipe(
               timeout(this.apiTimeout),
               catchError(fallbackError => {
-                console.error('Fallback database API error:', fallbackError);
+                console.error('Fallback database API error:', sanitize(fallbackError.message || 'Unknown error'));
                 return this.apiService.handleError(fallbackError);
               })
             );
