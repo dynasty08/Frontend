@@ -1,36 +1,55 @@
 <div class="login-container">
-  <div *ngIf="!isOnline" class="network-status offline">
-    You are currently offline. Some features may not be available.
+  <!-- Background overlay -->
+  <div class="overlay"></div>
+
+  <div class="login-card">
+    <!-- Logo / Branding -->
+    <div class="logo-section">
+      <img src="assets/logo.png" alt="App Logo" class="logo">
+      <h1>Your App</h1>
+      <p class="tagline">Welcome back, please login</p>
+    </div>
+
+    <!-- Network Status -->
+    <div *ngIf="!isOnline" class="network-status offline">
+      You are currently offline. Some features may not be available.
+    </div>
+
+    <!-- Login Form -->
+    <form class="login-form" (ngSubmit)="onSubmit()">
+      <input 
+        type="email" 
+        [(ngModel)]="email" 
+        name="email"
+        placeholder="Email"
+        required>
+
+      <input 
+        type="password" 
+        [(ngModel)]="password" 
+        name="password"
+        placeholder="Password"
+        required>
+
+      <!-- Error message -->
+      <div class="error" *ngIf="errorMessage" [class.connection-error]="errorMessage.includes('connect')">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Loading message -->
+      <div class="loading" *ngIf="isLoading">
+        Logging in...
+      </div>
+
+      <!-- Button -->
+      <button type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Logging in...' : 'Login' }}
+      </button>
+
+      <!-- Register link -->
+      <div class="register-link">
+        Don't have an account? <a (click)="goToRegister()">Register</a>
+      </div>
+    </form>
   </div>
-  <form class="login-form" (ngSubmit)="onSubmit()">
-    <h2>Login</h2>
-    
-    <input 
-      type="email" 
-      [(ngModel)]="email" 
-      name="email"
-      placeholder="Email"
-      required>
-
-    <input 
-      type="password" 
-      [(ngModel)]="password" 
-      name="password"
-      placeholder="Password"
-      required>
-
-    <div class="error" *ngIf="errorMessage" [class.connection-error]="errorMessage.includes('connect')">
-      {{ errorMessage }}
-    </div>
-
-    <div class="loading" *ngIf="isLoading">
-      Logging in...
-    </div>
-
-    <button type="submit" [disabled]="isLoading">{{ isLoading ? 'Logging in...' : 'Login' }}</button>
-    
-    <div class="register-link">
-      Don't have an account? <a (click)="goToRegister()">Register</a>
-    </div>
-  </form>
 </div>
