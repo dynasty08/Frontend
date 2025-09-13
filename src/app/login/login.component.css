@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
 :root {
   --primary-color: rgba(141, 32, 144, 1);
   --primary-gradient: linear-gradient(90deg, #ff0077, #8d2090);
@@ -8,7 +13,7 @@
 /* Container layout */
 .login-container {
   display: flex;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   background: var(--dark-bg);
   color: white;
@@ -165,4 +170,32 @@
   color: var(--primary-color);
   cursor: pointer;
   font-weight: bold;
+}
+
+/* ✅ Responsive fix */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left-side {
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+  }
+
+  .right-side {
+    width: 100%;
+    border-radius: 0;
+    padding: 20px;
+  }
+
+  .login-form {
+    max-width: 100%;
+  }
+}
+
+.login-form {
+  border: 5px solid red !important;
 }
