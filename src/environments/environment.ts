@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://twvn323zg6.execute-api.ap-southeast-1.amazonaws.com/dev',
+  apiUrl: 'https://5h3lq6djc4.execute-api.ap-southeast-1.amazonaws.com/dev',
   apiTimeout: 15000,
   maxRetries: 5,
   retryDelay: 1000,
